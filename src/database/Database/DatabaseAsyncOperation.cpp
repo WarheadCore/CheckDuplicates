@@ -69,8 +69,3 @@ void PreparedStatementTask::ExecuteQuery()
 
     _connection->Execute(_stmt);
 }
-
-void CheckAsyncQueueTask::Execute()
-{
-    _dbPool->CheckAsyncQueue();
-}

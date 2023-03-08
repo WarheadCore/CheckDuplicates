@@ -1,14 +1,14 @@
 /*
- * This file is part of the WarheadCore Project. See AUTHORS file for Copyright information
+ * This file is part of the TrinityCore Project. See AUTHORS file for Copyright information
  *
  * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Affero General Public License as published by the
- * Free Software Foundation; either version 3 of the License, or (at your
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 2 of the License, or (at your
  * option) any later version.
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
  * more details.
  *
  * You should have received a copy of the GNU General Public License along
@@ -20,60 +20,129 @@
 
 #include "Define.h"
 #include "Duration.h"
-#include <string>
 
-enum class TimeFormat : uint8
+struct IntervalTimer
 {
-    FullText,       // 1 Days 2 Hours 3 Minutes 4 Seconds 5 Milliseconds 6 Microseconds
-    ShortText,      // 1d 2h 3m 4s 5ms 6us
-    Numeric         // 1:2:3:4:5:6
+public:
+    IntervalTimer()
+        : _interval(0), _current(0)
+    {
+    }
+
+    void Update(time_t diff)
+    {
+        _current += diff;
+        if (_current < 0)
+            _current = 0;
+    }
+
+    bool Passed()
+    {
+        return _current >= _interval;
+    }
+
+    void Reset()
+    {
+        if (_current >= _interval)
+            _current %= _interval;
+    }
+
+    void SetCurrent(time_t current)
+    {
+        _current = current;
+    }
+
+    void SetInterval(time_t interval)
+    {
+        _interval = interval;
+    }
+
+    time_t GetInterval() const
+    {
+        return _interval;
+    }
+
+    time_t GetCurrent() const
+    {
+        return _current;
+    }
+
+private:
+    time_t _interval;
+    time_t _current;
 };
 
-namespace Warhead::Time
+struct TimeTracker
 {
-    WH_COMMON_API std::string ToTimeString(Microseconds durationTime, uint8 outCount = 3, TimeFormat timeFormat = TimeFormat::ShortText);
+public:
+    TimeTracker(int32 expiry = 0) : _expiryTime(expiry) { }
+    TimeTracker(Milliseconds expiry) : _expiryTime(expiry) { }
 
-    WH_COMMON_API time_t LocalTimeToUTCTime(time_t time);
-    WH_COMMON_API time_t GetLocalHourTimestamp(time_t time, uint8 hour, bool onlyAfterTime = true);
-    WH_COMMON_API std::tm TimeBreakdown(time_t t = 0);
-    WH_COMMON_API std::string TimeToTimestampStr(Seconds time = 0s, std::string_view fmt = {});
-}
-
-WH_COMMON_API struct tm* localtime_r(time_t const* time, struct tm* result);
-
-inline TimePoint GetApplicationStartTime()
-{
-    static const TimePoint ApplicationStartTime = std::chrono::steady_clock::now();
-    return ApplicationStartTime;
-}
-
-inline Milliseconds GetTimeMS()
-{
-    using namespace std::chrono;
-    return duration_cast<milliseconds>(steady_clock::now() - GetApplicationStartTime());
-}
-
-inline Milliseconds GetMSTimeDiff(Milliseconds oldMSTime, Milliseconds newMSTime)
-{
-    if (oldMSTime > newMSTime)
+    void Update(int32 diff)
     {
-        return oldMSTime - newMSTime;
+        Update(Milliseconds(diff));
     }
-    else
+
+    void Update(Milliseconds diff)
     {
-        return newMSTime - oldMSTime;
+        _expiryTime -= diff;
     }
-}
 
-inline Milliseconds GetMSTimeDiffToNow(Milliseconds oldMSTime)
-{
-    return GetMSTimeDiff(oldMSTime, GetTimeMS());
-}
+    bool Passed() const
+    {
+        return _expiryTime <= 0s;
+    }
 
-inline Seconds GetEpochTime()
+    void Reset(int32 expiry)
+    {
+        Reset(Milliseconds(expiry));
+    }
+
+    void Reset(Milliseconds expiry)
+    {
+        _expiryTime = expiry;
+    }
+
+    Milliseconds GetExpiry() const
+    {
+        return _expiryTime;
+    }
+
+private:
+    Milliseconds _expiryTime;
+};
+
+struct PeriodicTimer
 {
-    using namespace std::chrono;
-    return duration_cast<Seconds>(system_clock::now().time_since_epoch());
-}
+public:
+    PeriodicTimer(int32 period, int32 start_time)
+        : i_period(period), i_expireTime(start_time)
+    {
+    }
+
+    bool Update(const uint32 diff)
+    {
+        if ((i_expireTime -= diff) > 0)
+            return false;
+
+        i_expireTime += i_period > int32(diff) ? i_period : diff;
+        return true;
+    }
+
+    void SetPeriodic(int32 period, int32 start_time)
+    {
+        i_expireTime = start_time;
+        i_period = period;
+    }
+
+    // Tracker interface
+    void TUpdate(int32 diff) { i_expireTime -= diff; }
+    bool TPassed() const { return i_expireTime <= 0; }
+    void TReset(int32 diff, int32 period)  { i_expireTime += period > diff ? period : diff; }
+
+private:
+    int32 i_period;
+    int32 i_expireTime;
+};
 
 #endif

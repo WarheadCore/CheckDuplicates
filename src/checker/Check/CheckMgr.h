@@ -18,7 +18,9 @@
 #ifndef WARHEAD_CHECK_DUPLICATES_H_
 #define WARHEAD_CHECK_DUPLICATES_H_
 
-#include "Define.h"
+#include "WorldObject.h"
+#include "ObjectDefines.h"
+#include <string>
 
 class WH_CHECK_API CheckMgr
 {
@@ -28,7 +30,22 @@ public:
 
     static CheckMgr* instance();
 
-//private:
+    void StartCheck();
+
+private:
+    void LoadConfig();
+    void LoadCreatures();
+    void LoadGameObjects();
+
+    // Config
+    bool _checkCreature{};
+    bool _checkGameObjects{};
+    uint32 _mapID{};
+    std::string _sqlOutDir;
+
+    // Store
+    WorldObject<Creature> _creatures;
+    WorldObject<GameObject> _gameObjects;
 };
 
 #define sCheckMgr CheckMgr::instance()

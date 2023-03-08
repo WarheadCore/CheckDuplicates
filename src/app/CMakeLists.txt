@@ -48,3 +48,6 @@ if (UNIX)
 elseif (WIN32)
   install(TARGETS WarheadCheckDuplicates DESTINATION "${CMAKE_INSTALL_PREFIX}")
 endif()
+
+# Install config
+CopyDefaultConfig(WarheadCheckDuplicates)

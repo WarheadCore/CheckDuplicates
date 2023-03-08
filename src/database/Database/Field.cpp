@@ -185,7 +185,7 @@ bool Field::IsNumeric() const
 
 void Field::LogWrongType(std::string_view getter, std::string_view typeName) const
 {
-    TC_LOG_WARN("db.query", "Warning: {}<{}> on {} field {}.{} ({}.{}) at index {}.",
+    LOG_WARN("db.query", "Warning: {}<{}> on {} field {}.{} ({}.{}) at index {}.",
         getter, typeName, meta->TypeName, meta->TableAlias, meta->Alias, meta->TableName, meta->Name, meta->Index);
 }
 
@@ -235,38 +235,8 @@ T Field::GetData() const
             result = Warhead::StringTo<float>(data.value);
     }
 
-    if (auto alias = GetCleanAliasName(meta->Alias))
-    {
-        if ((StringEqualI(*alias, "min") || StringEqualI(*alias, "max")) && !IsCorrectAlias<T>(meta->Type, *alias))
-        {
-            LogWrongType(__FUNCTION__, Warhead::GetTypeName<T>());
-            //ABORT();
-        }
-
-        if ((StringEqualI(*alias, "sum") || StringEqualI(*alias, "avg")) && !IsCorrectAlias<T>(meta->Type, *alias))
-        {
-            LogWrongType(__FUNCTION__, Warhead::GetTypeName<T>());
-            TC_LOG_WARN("db.query", "> Please use GetData<double>()");
-            return GetData<double>();
-            //ABORT();
-        }
-
-        if (StringEqualI(*alias, "count") && !IsCorrectAlias<T>(meta->Type, *alias))
-        {
-            LogWrongType(__FUNCTION__, Warhead::GetTypeName<T>());
-            TC_LOG_WARN("db.query", "> Please use GetData<uint64>()");
-            return GetData<uint64>();
-            //ABORT();
-        }
-    }
-
     if (!result)
-    {
-        TC_LOG_FATAL("db.query", "> Incorrect value '{}' for type '{}'. Value is raw ? '{}'", data.value, Warhead::GetTypeName<T>(), data.raw);
-        TC_LOG_FATAL("db.query", "> Table name '{}'. Field name '{}'", meta->TableName, meta->Name);
-        //ABORT();
         return GetDefaultValue<T>();
-    }
 
     return *result;
 }

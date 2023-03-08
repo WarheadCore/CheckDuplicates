@@ -31,7 +31,7 @@ QueryResult SQLQueryHolderBase::GetResult(std::size_t index) const
     auto const& itr = _queries.find(index);
     if (itr == _queries.end())
     {
-        TC_LOG_ERROR("db.query", "Query holder result (QueryResult) tried to access non exist index {}", index);
+        LOG_ERROR("db.query", "Query holder result (QueryResult) tried to access non exist index {}", index);
         return nullptr;
     }
 
@@ -53,7 +53,7 @@ PreparedQueryResult SQLQueryHolderBase::GetPreparedResult(std::size_t index) con
     auto const& itr = _queries.find(index);
     if (itr == _queries.end())
     {
-        TC_LOG_ERROR("db.query", "Query holder result (PreparedQueryResult) tried to access non exist index {}", index);
+        LOG_ERROR("db.query", "Query holder result (PreparedQueryResult) tried to access non exist index {}", index);
         return nullptr;
     }
 
@@ -94,7 +94,7 @@ bool SQLQueryHolderBase::AddQuery(std::size_t index, std::string_view sql)
 {
     if (_queries.contains(index))
     {
-        TC_LOG_ERROR("db.query", "Query holder with index {} exist", index);
+        LOG_ERROR("db.query", "Query holder with index {} exist", index);
         return false;
     }
 
@@ -109,7 +109,7 @@ bool SQLQueryHolderBase::AddPreparedQuery(std::size_t index, PreparedStatement s
 {
     if (_queries.contains(index))
     {
-        TC_LOG_ERROR("db.query", "Query holder with index {} exist", index);
+        LOG_ERROR("db.query", "Query holder with index {} exist", index);
         return false;
     }
 

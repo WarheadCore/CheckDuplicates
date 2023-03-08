@@ -250,9 +250,6 @@ private:
 #ifdef WARHEAD_DEBUG
     static inline thread_local bool _warnSyncQueries = false;
 #endif
-
-    DatabaseWorkerPool(DatabaseWorkerPool const& right) = default;
-    DatabaseWorkerPool& operator=(DatabaseWorkerPool const& right) = delete;
 };
 
 #endif

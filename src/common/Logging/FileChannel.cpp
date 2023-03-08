@@ -23,7 +23,7 @@
 #include "Log.h"
 #include "LogMessage.h"
 #include "StringConvert.h"
-#include "Timer.h"
+#include "TimeUtils.h"
 #include "Util.h"
 #include <algorithm>
 #include <filesystem>

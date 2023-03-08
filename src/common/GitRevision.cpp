@@ -63,16 +63,6 @@ char const* GitRevision::GetMySQLExecutable()
     return _MYSQL_EXECUTABLE;
 }
 
-char const* GitRevision::GetFullDatabase()
-{
-    return _FULL_DATABASE;
-}
-
-char const* GitRevision::GetHotfixesDatabase()
-{
-    return _HOTFIXES_DATABASE;
-}
-
 #if WARHEAD_PLATFORM == WARHEAD_PLATFORM_WINDOWS
 #  ifdef _WIN64
 #    define WARHEAD_PLATFORM_STR "Win64"
@@ -95,8 +85,7 @@ char const* GitRevision::GetHotfixesDatabase()
 
 char const* GitRevision::GetFullVersion()
 {
-  return "TrinityCore rev. " VER_PRODUCTVERSION_STR
-    " (" WARHEAD_PLATFORM_STR ", " _BUILD_DIRECTIVE ", " WARHEAD_LINKAGE_TYPE_STR ")";
+   return "WarheadCheckDuplicates rev. " VER_PRODUCTVERSION_STR " (" WARHEAD_PLATFORM_STR ", " _BUILD_DIRECTIVE ", " WARHEAD_LINKAGE_TYPE_STR ")";
 }
 
 char const* GitRevision::GetCompanyNameStr()

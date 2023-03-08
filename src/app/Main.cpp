@@ -17,16 +17,16 @@
 
 #include "Banner.h"
 #include "Config.h"
-#include "Errors.h"
+#include "CheckMgr.h"
 #include "DatabaseEnv.h"
 #include "DatabaseMgr.h"
+#include "Errors.h"
 #include "Log.h"
 #include <csignal>
 #include <filesystem>
 
 namespace fs = std::filesystem;
 
-/// Launch the server
 int main()
 {
     signal(SIGABRT, &Warhead::AbortHandler);
@@ -53,6 +53,15 @@ int main()
             LOG_INFO("checker", "> Using DB client version:        {}", sDatabaseMgr->GetClientInfo());
             LOG_INFO("checker", "> Using DB server version:        {}", sDatabaseMgr->GetServerVersion());
         });
+
+    sDatabaseMgr->AddDatabase(WorldDatabase, "World");
+
+    if (!sDatabaseMgr->Load())
+        return 1;
+
+    std::shared_ptr<void> dbHandle(nullptr, [](void*) { sDatabaseMgr->CloseAllConnections(); });
+
+    sCheckMgr->StartCheck();
 
     LOG_INFO("checker", "Halting process...");
 

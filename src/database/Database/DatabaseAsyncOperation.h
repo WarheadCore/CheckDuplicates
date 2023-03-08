@@ -70,21 +70,4 @@ private:
     std::unique_ptr<PreparedQueryResultPromise> _result;
 };
 
-class WH_DATABASE_API CheckAsyncQueueTask
-{
-public:
-    explicit CheckAsyncQueueTask(DatabaseWorkerPool* dbPool) :
-        _dbPool(dbPool) { }
-
-    virtual ~CheckAsyncQueueTask() = default;
-
-    void Execute();
-
-private:
-    DatabaseWorkerPool* _dbPool;
-
-    CheckAsyncQueueTask(CheckAsyncQueueTask const& right) = delete;
-    CheckAsyncQueueTask& operator=(CheckAsyncQueueTask const& right) = delete;
-};
-
 #endif // _DATABASE_ASYNC_OPERATION_H_

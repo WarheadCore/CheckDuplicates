@@ -114,11 +114,11 @@ void TransactionTask::ExecuteQuery()
                 if (!TryExecute())
                     return;
 
-                TC_LOG_WARN("db.query", "Deadlocked SQL Transaction, retrying. Loop timer: {} ms, Thread Id: {}", loopDuration.count(), threadId);
+                LOG_WARN("db.query", "Deadlocked SQL Transaction, retrying. Loop timer: {} ms, Thread Id: {}", loopDuration.count(), threadId);
             }
         }
 
-        TC_LOG_ERROR("db.query", "Fatal deadlocked SQL Transaction, it will not be retried anymore. Thread Id: {}", threadId);
+        LOG_ERROR("db.query", "Fatal deadlocked SQL Transaction, it will not be retried anymore. Thread Id: {}", threadId);
     }
 
     // Clean up now.
@@ -162,11 +162,11 @@ void TransactionWithResultTask::ExecuteQuery()
                     return;
                 }
 
-                TC_LOG_WARN("db.query", "Deadlocked SQL Transaction, retrying. Loop timer: {} ms, Thread Id: {}", loopDuration.count(), threadId);
+                LOG_WARN("db.query", "Deadlocked SQL Transaction, retrying. Loop timer: {} ms, Thread Id: {}", loopDuration.count(), threadId);
             }
         }
 
-        TC_LOG_ERROR("db.query", "Fatal deadlocked SQL Transaction, it will not be retried anymore. Thread Id: {}", threadId);
+        LOG_ERROR("db.query", "Fatal deadlocked SQL Transaction, it will not be retried anymore. Thread Id: {}", threadId);
     }
 
     // Clean up now.

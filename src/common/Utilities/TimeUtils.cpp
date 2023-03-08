@@ -206,22 +206,6 @@ time_t Warhead::Time::LocalTimeToUTCTime(time_t time)
 #endif
 }
 
-time_t Warhead::Time::GetLocalHourTimestamp(time_t time, uint8 hour, bool onlyAfterTime)
-{
-    auto timeLocal = TimeBreakdown(time);
-    timeLocal.tm_hour = 0;
-    timeLocal.tm_min = 0;
-    timeLocal.tm_sec = 0;
-
-    time_t midnightLocal = mktime(&timeLocal);
-    time_t hourLocal = midnightLocal + hour * HOUR;
-
-    if (onlyAfterTime && hourLocal <= time)
-        hourLocal += DAY;
-
-    return hourLocal;
-}
-
 std::string Warhead::Time::TimeToTimestampStr(Seconds time /*= 0s*/, std::string_view fmt /*= {}*/)
 {
     std::stringstream ss;
@@ -250,54 +234,6 @@ std::string Warhead::Time::TimeToHumanReadable(Seconds time /*= 0s*/, std::strin
 
     ss << std::put_time(std::localtime(&t), format.c_str());
     return ss.str();
-}
-
-time_t Warhead::Time::GetNextTimeWithDayAndHour(int8 dayOfWeek, int8 hour)
-{
-    if (hour < 0 || hour > 23)
-        hour = 0;
-
-    tm localTm = TimeBreakdown();
-    localTm.tm_hour = hour;
-    localTm.tm_min = 0;
-    localTm.tm_sec = 0;
-
-    if (dayOfWeek < 0 || dayOfWeek > 6)
-        dayOfWeek = (localTm.tm_wday + 1) % 7;
-
-    uint32 add;
-
-    if (localTm.tm_wday >= dayOfWeek)
-        add = (7 - (localTm.tm_wday - dayOfWeek)) * DAY;
-    else
-        add = (dayOfWeek - localTm.tm_wday) * DAY;
-
-    return mktime(&localTm) + add;
-}
-
-time_t Warhead::Time::GetNextTimeWithMonthAndHour(int8 month, int8 hour)
-{
-    if (hour < 0 || hour > 23)
-        hour = 0;
-
-    tm localTm = TimeBreakdown();
-    localTm.tm_mday = 1;
-    localTm.tm_hour = hour;
-    localTm.tm_min = 0;
-    localTm.tm_sec = 0;
-
-    if (month < 0 || month > 11)
-    {
-        month = (localTm.tm_mon + 1) % 12;
-
-        if (!month)
-            localTm.tm_year += 1;
-    }
-    else if (localTm.tm_mon >= month)
-        localTm.tm_year += 1;
-
-    localTm.tm_mon = month;
-    return mktime(&localTm);
 }
 
 uint32 Warhead::Time::GetSeconds(Seconds time /*= 0s*/)

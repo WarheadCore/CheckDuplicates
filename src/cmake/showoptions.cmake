@@ -17,6 +17,7 @@
 
 # output generic information about the core and buildtype chosen
 message(STATUS "")
+message(STATUS "* Revision                        : ${rev_hash} ${rev_date} (${rev_branch} branch)")
 
 if (UNIX)
   message(STATUS "* Buildtype                       : ${CMAKE_BUILD_TYPE}")
@@ -25,7 +26,7 @@ endif()
 message(STATUS "*")
 
 # output information about installation-directories and locations
-message(STATUS "* Install server to               : ${CMAKE_INSTALL_PREFIX}")
+message(STATUS "* Install app to                  : ${CMAKE_INSTALL_PREFIX}")
 if (UNIX)
   message(STATUS "* Install libraries to            : ${LIBSDIR}")
 endif()

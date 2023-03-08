@@ -24,6 +24,11 @@ void WorldDatabasePool::DoPrepareStatements()
 {
     SetStatementSize(MAX_WORLDDATABASE_STATEMENTS);
 
-    PrepareStatement(WORLD_SEL_CREATURES, "SELECT", CONNECTION_SYNCH);
-    PrepareStatement(WORLD_SEL_GAMEOBJECTS, "SELECT", CONNECTION_SYNCH);
+    PrepareStatement(WORLD_SEL_CREATURES_ALL, "SELECT `guid`, `id`, `map`, `zoneId`, `areaId`, `spawnDifficulties`, `PhaseId`, `position_x`, `position_y`, `position_z`, `orientation` FROM `creature` ORDER BY `guid`", CONNECTION_SYNCH);
+    PrepareStatement(WORLD_SEL_CREATURES_WITH_MAP, "SELECT `guid`, `id`, `map`, `zoneId`, `areaId`, `spawnDifficulties`, `PhaseId`, `position_x`, `position_y`, `position_z`, `orientation` FROM `creature` WHERE `map` = ? ORDER BY `guid`", CONNECTION_SYNCH);
+    PrepareStatement(WORLD_SEL_CREATURES_NAME, "SELECT ct.`entry`, ct.`name`, ctl.`Name` FROM creature_template AS ct LEFT JOIN creature_template_locale ctl ON ct.`entry` = ctl.`entry` AND ctl.`locale` = 'ruRU' AND ct.`name` != ctl.`Name`", CONNECTION_SYNCH);
+
+    PrepareStatement(WORLD_SEL_GAMEOBJECTS_ALL, "SELECT `guid`, `id`, `map`, `zoneId`, `areaId`, `spawnDifficulties`, `PhaseId`, `position_x`, `position_y`, `position_z`, `orientation`, `rotation0`, `rotation1`, `rotation2`, `rotation3` FROM `gameobject` ORDER BY `guid`", CONNECTION_SYNCH);
+    PrepareStatement(WORLD_SEL_GAMEOBJECTS_WITH_MAP, "SELECT `guid`, `id`, `map`, `zoneId`, `areaId`, `spawnDifficulties`, `PhaseId`, `position_x`, `position_y`, `position_z`, `orientation`, `rotation0`, `rotation1`, `rotation2`, `rotation3` FROM `gameobject` WHERE `map` = ? ORDER BY `guid`", CONNECTION_SYNCH);
+    PrepareStatement(WORLD_SEL_GAMEOBJECTS_NAME, "SELECT gt.`entry`, gt.`name`, gtl.`Name` FROM `gameobject_template` AS gt LEFT JOIN gameobject_template_locale gtl ON gt.`entry` = gtl.`entry` AND gtl.`locale` = 'ruRU' AND gt.`name` != gtl.`Name`", CONNECTION_SYNCH);
 }

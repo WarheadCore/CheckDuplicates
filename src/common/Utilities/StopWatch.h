@@ -18,7 +18,7 @@
 #ifndef _STOPWATCH_H_
 #define _STOPWATCH_H_
 
-#include "Timer.h"
+#include "TimeUtils.h"
 #include <fmt/format.h>
 
 class StopWatch

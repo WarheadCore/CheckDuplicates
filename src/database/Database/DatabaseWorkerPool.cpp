@@ -42,7 +42,7 @@
 #include <sstream>
 #endif
 
-#ifdef LIBMARIADB && MARIADB_VERSION_ID >= 100600
+#if defined(LIBMARIADB) && MARIADB_VERSION_ID >= 100600
 #define MIN_DB_SERVER_VERSION 100300u
 #define MIN_DB_CLIENT_VERSION 30203u
 #else
@@ -55,7 +55,7 @@ DatabaseWorkerPool::DatabaseWorkerPool(DatabaseType type) :
 {
     ASSERT(mysql_thread_safe(), "Used MySQL library isn't thread-safe");
 
-#ifndef LIBMARIADB || MARIADB_VERSION_ID < 100600u
+#if !defined(LIBMARIADB) || MARIADB_VERSION_ID < 100600u
     bool isSupportClientDB = mysql_get_client_version() >= MIN_DB_CLIENT_VERSION;
     bool isSameClientDB = mysql_get_client_version() == MYSQL_VERSION_ID;
 #else // MariaDB 10.6+
@@ -201,7 +201,7 @@ MySQLConnection* DatabaseWorkerPool::GetFreeConnection()
     {
         std::ostringstream ss;
         ss << boost::stacktrace::stacktrace();
-        TC_LOG_WARN("db.pool", "Sync query at:\n{}", ss.str());
+        LOG_WARN("db.pool", "Sync query at:\n{}", ss.str());
     }
 #endif
 
@@ -399,10 +399,10 @@ void DatabaseWorkerPool::CommitTransaction(SQLTransaction transaction)
     switch (transaction->GetSize())
     {
     case 0:
-        TC_LOG_DEBUG("db.pool", "Transaction contains 0 queries. Not executing.");
+        LOG_DEBUG("db.pool", "Transaction contains 0 queries. Not executing.");
         return;
     case 1:
-        TC_LOG_DEBUG("db.pool", "Warning: Transaction only holds 1 query, consider removing Transaction context in code.");
+        LOG_DEBUG("db.pool", "Warning: Transaction only holds 1 query, consider removing Transaction context in code.");
         break;
     default:
         break;
@@ -421,10 +421,10 @@ TransactionCallback DatabaseWorkerPool::AsyncCommitTransaction(SQLTransaction tr
     switch (transaction->GetSize())
     {
         case 0:
-            TC_LOG_DEBUG("db.pool", "Transaction contains 0 queries. Not executing.");
+            LOG_DEBUG("db.pool", "Transaction contains 0 queries. Not executing.");
             break;
         case 1:
-            TC_LOG_DEBUG("db.pool", "Warning: Transaction only holds 1 query, consider removing Transaction context in code.");
+            LOG_DEBUG("db.pool", "Warning: Transaction only holds 1 query, consider removing Transaction context in code.");
             break;
         default:
             break;

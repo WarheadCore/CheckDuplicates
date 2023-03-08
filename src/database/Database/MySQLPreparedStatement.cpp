@@ -84,7 +84,7 @@ void MySQLPreparedStatement::BindParameters(PreparedStatement stmt)
 
 #ifdef _DEBUG
     if (pos < m_paramCount)
-        TC_LOG_WARN("db.query", "BindParameters() for statement {} did not bind all allocated parameters", stmt->GetIndex());
+        LOG_WARN("db.query", "BindParameters() for statement {} did not bind all allocated parameters", stmt->GetIndex());
 #endif
 }
 
@@ -102,7 +102,7 @@ void MySQLPreparedStatement::ClearParameters()
 
 static bool ParamenterIndexAssertFail(uint32 stmtIndex, uint8 index, uint32 paramCount)
 {
-    TC_LOG_ERROR("db.query", "Attempted to bind parameter {}{} on a PreparedStatementBase {} (statement has only {} parameters)",
+    LOG_ERROR("db.query", "Attempted to bind parameter {}{} on a PreparedStatementBase {} (statement has only {} parameters)",
         uint32(index) + 1, (index == 1 ? "st" : (index == 2 ? "nd" : (index == 3 ? "rd" : "nd"))), stmtIndex, paramCount);
 
     return false;
@@ -114,7 +114,7 @@ void MySQLPreparedStatement::AssertValidIndex(uint8 index)
     ASSERT(index < _paramCount || ParamenterIndexAssertFail(_stmt->GetIndex(), index, _paramCount));
 
     if (_paramsSet[index])
-        TC_LOG_ERROR("db.query", "Prepared Statement (id: {}) trying to bind value on already bound index ({}).", _stmt->GetIndex(), index);
+        LOG_ERROR("db.query", "Prepared Statement (id: {}) trying to bind value on already bound index ({}).", _stmt->GetIndex(), index);
 }
 
 template<typename T>

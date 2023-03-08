@@ -61,6 +61,7 @@ include(ConfigureBaseTargets)
 include(CheckPlatform)
 include(GroupSources)
 include(AutoCollect)
+include(ConfigInstall)
 
 if (NOT WITHOUT_GIT)
   find_package(Git 1.7)

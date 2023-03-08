@@ -70,7 +70,7 @@ namespace
                 MYSQL_TYPE_SET:
                 */
             default:
-                TC_LOG_WARN("db.query", "SQL::SizeForType(): invalid field type {}", uint32(field->type));
+                LOG_WARN("db.query", "SQL::SizeForType(): invalid field type {}", uint32(field->type));
                 return 0;
         }
     }
@@ -112,7 +112,7 @@ namespace
             case MYSQL_TYPE_VAR_STRING:
                 return DatabaseFieldTypes::Binary;
             default:
-                TC_LOG_WARN("db.query", "MysqlTypeToFieldType(): invalid field type {}", uint32(type));
+                LOG_WARN("db.query", "MysqlTypeToFieldType(): invalid field type {}", uint32(type));
                 break;
         }
 
@@ -201,7 +201,7 @@ bool ResultSet::NextRow()
     unsigned long* lengths = mysql_fetch_lengths(_result);
     if (!lengths)
     {
-        TC_LOG_WARN("db.query", "{}:mysql_fetch_lengths, cannot retrieve value lengths. Error {}.", __FUNCTION__, mysql_error(_result->handle));
+        LOG_WARN("db.query", "{}:mysql_fetch_lengths, cannot retrieve value lengths. Error {}.", __FUNCTION__, mysql_error(_result->handle));
         CleanUp();
         return false;
     }
@@ -268,7 +268,7 @@ PreparedResultSet::PreparedResultSet(MySQLStmt* stmt, MySQLResult* result, uint6
     //- This is where we store the (entire) resultset
     if (mysql_stmt_store_result(_stmt))
     {
-        TC_LOG_WARN("db.query", "{}:mysql_stmt_store_result, cannot bind result from MySQL server. Error: {}", __FUNCTION__, mysql_stmt_error(_stmt));
+        LOG_WARN("db.query", "{}:mysql_stmt_store_result, cannot bind result from MySQL server. Error: {}", __FUNCTION__, mysql_stmt_error(_stmt));
         delete[] _rBind;
         delete[] isNull;
         delete[] length;
@@ -307,7 +307,7 @@ PreparedResultSet::PreparedResultSet(MySQLStmt* stmt, MySQLResult* result, uint6
     //- This is where we bind the bind the buffer to the statement
     if (mysql_stmt_bind_result(_stmt, _rBind))
     {
-        TC_LOG_WARN("db.query", "{}:mysql_stmt_bind_result, cannot bind result from MySQL server. Error: {}", __FUNCTION__, mysql_stmt_error(_stmt));
+        LOG_WARN("db.query", "{}:mysql_stmt_bind_result, cannot bind result from MySQL server. Error: {}", __FUNCTION__, mysql_stmt_error(_stmt));
         mysql_stmt_free_result(_stmt);
         CleanUp();
         delete[] isNull;

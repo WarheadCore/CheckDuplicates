@@ -15,8 +15,8 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef TrinityCore_Banner_h__
-#define TrinityCore_Banner_h__
+#ifndef WARHEAD_BANNER_H_
+#define WARHEAD_BANNER_H_
 
 #include "Define.h"
 #include <string_view>
@@ -26,4 +26,4 @@ namespace Warhead::Banner
     WH_COMMON_API void Show(std::string_view applicationName, void(*log)(std::string_view text), void(*logExtraInfo)() = nullptr);
 }
 
-#endif // TrinityCore_Banner_h__
+#endif
